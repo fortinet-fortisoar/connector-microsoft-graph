@@ -1,7 +1,7 @@
 {
   "name": "microsoft-graph",
   "label": "Microsoft Graph API",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Microsoft Graph API is a powerful and unified programming interface provided by Microsoft that allows developers to access a wide range of data and services from Microsoft 365 and Azure Active Directory (Azure AD). It provides a single endpoint and a consistent set of RESTful web APIs, making it easier for developers to integrate and interact with Microsoft's cloud services and applications.",
   "publisher": "Fortinet",
   "cs_approved": true,
@@ -9,7 +9,7 @@
   "category": "Utilities",
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
-  "help_online": "https://docs.fortinet.com/document/fortisoar/2.1.0/microsoft-graph-api/825/microsoft-graph-api-v2-1-0",
+  "help_online": "",
   "ingestion_supported": false,
   "configuration": {
     "fields": [
@@ -270,8 +270,8 @@
           "title": "API Version",
           "type": "select",
           "name": "api_version",
-          "description": "Select the version of the API. If the user selects V1, this refers to the original or older version of the alerts API. If the user selects V2, this provides comprehensive information and detailed context about alerts.",
-          "tooltip": "Select the version of the API. If the user selects V1, this refers to the original or older version of the alerts API. If the user selects V2, this provides comprehensive information and detailed context about alerts.",
+          "description": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
+          "tooltip": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
           "required": false,
           "editable": true,
           "visible": true,
@@ -454,12 +454,204 @@
           "type": "text",
           "tooltip": "Specify the name of the analyst to filter alerts assigned to that specific analyst.",
           "name": "assigned_to"
+        },
+        {
+          "title": "Limit",
+          "description": "(Optional) Specify the maximum number of records retrieved in the response. The maximum limit is 2000.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "integer",
+          "tooltip": "Specify the maximum number of records retrieved in the response. The maximum limit is 2000.",
+          "name": "top"
+        },
+        {
+          "title": "Offset",
+          "description": "(Optional) Skips the specified number of records in the result set.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "integer",
+          "tooltip": "Skips the specified number of records in the result set.",
+          "name": "skip"
         }
       ],
-      "output_schema": {
-        "@odata.context": "",
-        "value": [
-          {
+      "conditional_output_schema": [
+        {
+          "condition": "{{api_version === 'V1'}}",
+          "output_schema": {
+            "@odata.context": "",
+            "value": [
+              {
+                "id": "",
+                "azureTenantId": "",
+                "azureSubscriptionId": "",
+                "riskScore": "",
+                "tags": [],
+                "activityGroupName": "",
+                "assignedTo": "",
+                "category": "",
+                "closedDateTime": "",
+                "comments": [],
+                "confidence": "",
+                "createdDateTime": "",
+                "description": "",
+                "detectionIds": [],
+                "eventDateTime": "",
+                "feedback": "",
+                "incidentIds": [],
+                "lastEventDateTime": "",
+                "lastModifiedDateTime": "",
+                "recommendedActions": [],
+                "severity": "",
+                "sourceMaterials": [],
+                "status": "",
+                "title": "",
+                "vendorInformation": {
+                  "provider": "",
+                  "providerVersion": "",
+                  "subProvider": "",
+                  "vendor": ""
+                },
+                "alertDetections": [],
+                "cloudAppStates": [],
+                "fileStates": [],
+                "hostStates": [],
+                "historyStates": [],
+                "investigationSecurityStates": [],
+                "malwareStates": [],
+                "messageSecurityStates": [],
+                "networkConnections": [],
+                "processes": [],
+                "registryKeyStates": [],
+                "securityResources": [],
+                "triggers": [],
+                "userStates": [],
+                "uriClickSecurityStates": [],
+                "vulnerabilityStates": []
+              }
+            ]
+          }
+        },
+        {
+          "condition": "{{api_version === 'V2'}}",
+          "output_schema": {
+            "value": [
+              {
+                "id": "",
+                "title": "",
+                "status": "",
+                "category": "",
+                "comments": [
+                  {
+                    "comment": "",
+                    "createdDateTime": "",
+                    "createdByDisplayName": ""
+                  }
+                ],
+                "evidence": [
+                  {
+                    "tags": [],
+                    "roles": [],
+                    "osBuild": "",
+                    "verdict": "",
+                    "version": "",
+                    "riskScore": "",
+                    "osPlatform": "",
+                    "vmMetadata": "",
+                    "@odata.type": "",
+                    "mdeDeviceId": "",
+                    "rbacGroupId": "",
+                    "healthStatus": "",
+                    "ipInterfaces": [],
+                    "detailedRoles": [],
+                    "deviceDnsName": "",
+                    "lastIpAddress": "",
+                    "loggedOnUsers": [],
+                    "rbacGroupName": null,
+                    "azureAdDeviceId": null,
+                    "createdDateTime": "",
+                    "defenderAvStatus": "",
+                    "onboardingStatus": "",
+                    "firstSeenDateTime": "",
+                    "remediationStatus": "",
+                    "lastExternalIpAddress": "",
+                    "remediationStatusDetails": null
+                  }
+                ],
+                "severity": "",
+                "tenantId": "",
+                "assignedTo": "",
+                "detectorId": "",
+                "incidentId": "",
+                "systemTags": [],
+                "alertWebUrl": "",
+                "description": "",
+                "productName": "",
+                "alertPolicyId": "",
+                "determination": "",
+                "serviceSource": "",
+                "additionalData": "",
+                "classification": "",
+                "incidentWebUrl": "",
+                "createdDateTime": "",
+                "detectionSource": "",
+                "mitreTechniques": [],
+                "providerAlertId": "",
+                "actorDisplayName": "",
+                "resolvedDateTime": "",
+                "threatFamilyName": "",
+                "threatDisplayName": "",
+                "lastUpdateDateTime": "",
+                "recommendedActions": "",
+                "lastActivityDateTime": "",
+                "firstActivityDateTime": ""
+              }
+            ],
+            "@odata.context": ""
+          }
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "title": "Get Security Alert",
+      "description": "Retrieves details of a specific alert from Microsoft Graph API based on the alert ID you have specified.",
+      "operation": "get_security_alert",
+      "category": "investigation",
+      "annotation": "get_security_alert",
+      "parameters": [
+        {
+          "title": "API Version",
+          "type": "select",
+          "name": "api_version",
+          "description": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
+          "tooltip": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "V1",
+            "V2"
+          ],
+          "value": "V1"
+        },
+        {
+          "title": "Alert ID",
+          "description": "Specify the unique Alert ID to retrieve that alert from Microsoft Graph API. The alert ID is generated by the provider when an alert is created in Azure.",
+          "tooltip": "Specify the unique Alert ID using which you want to retrieve the specific alert from Microsoft Graph API. The alert ID is generated by the provider when an alert is created in Azure.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "alert_id"
+        }
+      ],
+      "conditional_output_schema": [
+        {
+          "condition": "{{api_version === 'V1'}}",
+          "output_schema": {
+            "@odata.context": "",
             "id": "",
             "azureTenantId": "",
             "azureSubscriptionId": "",
@@ -493,7 +685,19 @@
             "alertDetections": [],
             "cloudAppStates": [],
             "fileStates": [],
-            "hostStates": [],
+            "hostStates": [
+              {
+                "fqdn": "",
+                "isAzureAdJoined": "",
+                "isAzureAdRegistered": "",
+                "isHybridAzureDomainJoined": "",
+                "netBiosName": "",
+                "os": "",
+                "privateIpAddress": "",
+                "publicIpAddress": "",
+                "riskScore": ""
+              }
+            ],
             "historyStates": [],
             "investigationSecurityStates": [],
             "malwareStates": [],
@@ -507,109 +711,89 @@
             "uriClickSecurityStates": [],
             "vulnerabilityStates": []
           }
-        ]
-      },
-      "enabled": true
-    },
-    {
-      "title": "Get Security Alert",
-      "description": "Retrieves details of a specific alert from Microsoft Graph API based on the alert ID you have specified.",
-      "operation": "get_security_alert",
-      "category": "investigation",
-      "annotation": "get_security_alert",
-      "parameters": [
-        {
-          "title": "API Version",
-          "type": "select",
-          "name": "api_version",
-          "description": "Select the version of the API. If the user selects V1, this refers to the original or older version of the alerts API. If the user selects V2, this provides comprehensive information and detailed context about alerts.",
-          "tooltip": "Select the version of the API. If the user selects V1, this refers to the original or older version of the alerts API. If the user selects V2, this provides comprehensive information and detailed context about alerts.",
-          "required": false,
-          "editable": true,
-          "visible": true,
-          "options": [
-            "V1",
-            "V2"
-          ],
-          "value": "V1"
         },
         {
-          "title": "Alert ID",
-          "description": "Specify the unique Alert ID to retrieve that alert from Microsoft Graph API. The alert ID is generated by the provider when an alert is created in Azure.",
-          "tooltip": "Specify the unique Alert ID using which you want to retrieve the specific alert from Microsoft Graph API. The alert ID is generated by the provider when an alert is created in Azure.",
-          "required": true,
-          "editable": true,
-          "visible": true,
-          "type": "text",
-          "name": "alert_id"
+          "condition": "{{api_version === 'V2'}}",
+          "output_schema": {
+            "id": "",
+            "title": "",
+            "status": "",
+            "category": "",
+            "comments": [
+              {
+                "comment": "",
+                "createdDateTime": "",
+                "createdByDisplayName": ""
+              }
+            ],
+            "evidence": [
+              {
+                "tags": [],
+                "roles": [],
+                "verdict": "",
+                "resourceId": "",
+                "@odata.type": "",
+                "resourceName": "",
+                "resourceType": "",
+                "detailedRoles": [],
+                "createdDateTime": "",
+                "remediationStatus": "",
+                "remediationStatusDetails": ""
+              }
+            ],
+            "severity": "",
+            "tenantId": "",
+            "assignedTo": "",
+            "detectorId": "",
+            "incidentId": "",
+            "systemTags": [],
+            "alertWebUrl": "",
+            "description": "",
+            "productName": "",
+            "alertPolicyId": "",
+            "determination": "",
+            "serviceSource": "",
+            "additionalData": {
+              "Intent": "",
+              "Server": "",
+              "AlertUri": "",
+              "Database": "",
+              "Threat ID": "",
+              "IP address": "",
+              "Application": "",
+              "TimeGenerated": "",
+              "Principal name": "",
+              "Potential causes": "",
+              "Intent@odata.type": "",
+              "ProcessingEndTime": "",
+              "ProductComponentName": "",
+              "EffectiveSubscriptionId": "",
+              "EffectiveAzureResourceId": "",
+              "OriginalAlertProductName": "",
+              "OriginalAlertProviderName": ""
+            },
+            "classification": "",
+            "incidentWebUrl": "",
+            "createdDateTime": "",
+            "detectionSource": "",
+            "mitreTechniques": [],
+            "providerAlertId": "",
+            "actorDisplayName": "",
+            "resolvedDateTime": "",
+            "threatFamilyName": "",
+            "threatDisplayName": "",
+            "lastUpdateDateTime": "",
+            "recommendedActions": "",
+            "lastActivityDateTime": "",
+            "firstActivityDateTime": ""
+          }
         }
       ],
-      "output_schema": {
-        "@odata.context": "",
-        "id": "",
-        "azureTenantId": "",
-        "azureSubscriptionId": "",
-        "riskScore": "",
-        "tags": [],
-        "activityGroupName": "",
-        "assignedTo": "",
-        "category": "",
-        "closedDateTime": "",
-        "comments": [],
-        "confidence": "",
-        "createdDateTime": "",
-        "description": "",
-        "detectionIds": [],
-        "eventDateTime": "",
-        "feedback": "",
-        "incidentIds": [],
-        "lastEventDateTime": "",
-        "lastModifiedDateTime": "",
-        "recommendedActions": [],
-        "severity": "",
-        "sourceMaterials": [],
-        "status": "",
-        "title": "",
-        "vendorInformation": {
-          "provider": "",
-          "providerVersion": "",
-          "subProvider": "",
-          "vendor": ""
-        },
-        "alertDetections": [],
-        "cloudAppStates": [],
-        "fileStates": [],
-        "hostStates": [
-          {
-            "fqdn": "",
-            "isAzureAdJoined": "",
-            "isAzureAdRegistered": "",
-            "isHybridAzureDomainJoined": "",
-            "netBiosName": "",
-            "os": "",
-            "privateIpAddress": "",
-            "publicIpAddress": "",
-            "riskScore": ""
-          }
-        ],
-        "historyStates": [],
-        "investigationSecurityStates": [],
-        "malwareStates": [],
-        "messageSecurityStates": [],
-        "networkConnections": [],
-        "processes": [],
-        "registryKeyStates": [],
-        "securityResources": [],
-        "triggers": [],
-        "userStates": [],
-        "uriClickSecurityStates": [],
-        "vulnerabilityStates": []
-      },
       "enabled": true
     },
     {
       "title": "Update Security Alert",
-      "description": "Updates a specific alert using Microsoft Graph API based on the alert ID, vendor name, provider name, and other input parameters you have specified.",
+      "description": "Updates a specific alert using Microsoft Graph API based on the input parameters you have specified.",
       "operation": "update_security_alert",
       "category": "investigation",
       "annotation": "update_security_alert",
@@ -628,8 +812,8 @@
           "title": "API Version",
           "type": "select",
           "name": "api_version",
-          "description": "Select the version of the API. If the user selects V1, it refers to the original or older version of the API for updating alerts. If the user selects V2, it updates alerts using the newly supported V2 alert information.",
-          "tooltip": "Select the version of the API. If the user selects V1, it refers to the original or older version of the API for updating alerts. If the user selects V2, it updates alerts using the newly supported V2 alert information.",
+          "description": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
+          "tooltip": "Select the version of the API. If the user selects V2, it provides comprehensive information and detailed context about alerts, where as V1 refers to the older version of the alerts API. By default, V1 is selected.",
           "required": false,
           "editable": true,
           "visible": true,
@@ -816,67 +1000,145 @@
           "name": "assigned_to"
         }
       ],
-      "output_schema": {
-        "@odata.context": "",
-        "id": "",
-        "azureTenantId": "",
-        "azureSubscriptionId": "",
-        "riskScore": "",
-        "tags": [],
-        "activityGroupName": "",
-        "assignedTo": "",
-        "category": "",
-        "closedDateTime": "",
-        "comments": [],
-        "confidence": "",
-        "createdDateTime": "",
-        "description": "",
-        "detectionIds": [],
-        "eventDateTime": "",
-        "feedback": "",
-        "incidentIds": [],
-        "lastEventDateTime": "",
-        "lastModifiedDateTime": "",
-        "recommendedActions": [],
-        "severity": "",
-        "sourceMaterials": [],
-        "status": "",
-        "title": "",
-        "vendorInformation": {
-          "provider": "",
-          "providerVersion": "",
-          "subProvider": "",
-          "vendor": ""
-        },
-        "alertDetections": [],
-        "cloudAppStates": [],
-        "fileStates": [],
-        "hostStates": [
-          {
-            "fqdn": "",
-            "isAzureAdJoined": "",
-            "isAzureAdRegistered": "",
-            "isHybridAzureDomainJoined": "",
-            "netBiosName": "",
-            "os": "",
-            "privateIpAddress": "",
-            "publicIpAddress": "",
-            "riskScore": ""
+      "conditional_output_schema": [
+        {
+          "condition": "{{api_version === 'V1'}}",
+          "output_schema": {
+            "@odata.context": "",
+            "id": "",
+            "azureTenantId": "",
+            "azureSubscriptionId": "",
+            "riskScore": "",
+            "tags": [],
+            "activityGroupName": "",
+            "assignedTo": "",
+            "category": "",
+            "closedDateTime": "",
+            "comments": [],
+            "confidence": "",
+            "createdDateTime": "",
+            "description": "",
+            "detectionIds": [],
+            "eventDateTime": "",
+            "feedback": "",
+            "incidentIds": [],
+            "lastEventDateTime": "",
+            "lastModifiedDateTime": "",
+            "recommendedActions": [],
+            "severity": "",
+            "sourceMaterials": [],
+            "status": "",
+            "title": "",
+            "vendorInformation": {
+              "provider": "",
+              "providerVersion": "",
+              "subProvider": "",
+              "vendor": ""
+            },
+            "alertDetections": [],
+            "cloudAppStates": [],
+            "fileStates": [],
+            "hostStates": [
+              {
+                "fqdn": "",
+                "isAzureAdJoined": "",
+                "isAzureAdRegistered": "",
+                "isHybridAzureDomainJoined": "",
+                "netBiosName": "",
+                "os": "",
+                "privateIpAddress": "",
+                "publicIpAddress": "",
+                "riskScore": ""
+              }
+            ],
+            "historyStates": [],
+            "investigationSecurityStates": [],
+            "malwareStates": [],
+            "messageSecurityStates": [],
+            "networkConnections": [],
+            "processes": [],
+            "registryKeyStates": [],
+            "securityResources": [],
+            "triggers": [],
+            "userStates": [],
+            "uriClickSecurityStates": [],
+            "vulnerabilityStates": []
           }
-        ],
-        "historyStates": [],
-        "investigationSecurityStates": [],
-        "malwareStates": [],
-        "messageSecurityStates": [],
-        "networkConnections": [],
-        "processes": [],
-        "registryKeyStates": [],
-        "securityResources": [],
-        "triggers": [],
-        "userStates": [],
-        "uriClickSecurityStates": [],
-        "vulnerabilityStates": []
-      },
+        },
+        {
+          "condition": "{{api_version === 'V2'}}",
+          "output_schema": {
+            "id": "",
+            "title": "",
+            "status": "",
+            "category": "",
+            "comments": [
+              {
+                "comment": "",
+                "createdDateTime": "",
+                "createdByDisplayName": ""
+              }
+            ],
+            "evidence": [
+              {
+                "tags": [],
+                "roles": [],
+                "osBuild": "",
+                "verdict": "",
+                "version": "",
+                "riskScore": "",
+                "osPlatform": "",
+                "vmMetadata": "",
+                "@odata.type": "",
+                "mdeDeviceId": "",
+                "rbacGroupId": "",
+                "healthStatus": "",
+                "ipInterfaces": [],
+                "detailedRoles": [],
+                "deviceDnsName": "",
+                "lastIpAddress": "",
+                "loggedOnUsers": [],
+                "rbacGroupName": "",
+                "azureAdDeviceId": "",
+                "createdDateTime": "",
+                "defenderAvStatus": "",
+                "onboardingStatus": "",
+                "firstSeenDateTime": "",
+                "remediationStatus": "",
+                "lastExternalIpAddress": "",
+                "remediationStatusDetails": ""
+              }
+            ],
+            "severity": "",
+            "tenantId": "",
+            "assignedTo": "",
+            "detectorId": "",
+            "incidentId": "",
+            "systemTags": [],
+            "alertWebUrl": "",
+            "description": "",
+            "productName": "",
+            "alertPolicyId": "",
+            "determination": "",
+            "serviceSource": "",
+            "additionalData": "",
+            "classification": "",
+            "incidentWebUrl": "",
+            "createdDateTime": "",
+            "detectionSource": "",
+            "mitreTechniques": [],
+            "providerAlertId": "",
+            "actorDisplayName": "",
+            "resolvedDateTime": "",
+            "threatFamilyName": "",
+            "threatDisplayName": "",
+            "lastUpdateDateTime": "",
+            "recommendedActions": "",
+            "lastActivityDateTime": "",
+            "firstActivityDateTime": ""
+          }
+        }
+      ],
       "enabled": true
     },
     {
