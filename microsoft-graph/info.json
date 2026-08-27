@@ -1,15 +1,16 @@
 {
   "name": "microsoft-graph",
   "label": "Microsoft Graph API",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Microsoft Graph API is a powerful and unified programming interface provided by Microsoft that allows developers to access a wide range of data and services from Microsoft 365 and Azure Active Directory (Azure AD). It provides a single endpoint and a consistent set of RESTful web APIs, making it easier for developers to integrate and interact with Microsoft's cloud services and applications.",
   "publisher": "Fortinet",
-  "cs_approved": false,
+  "contributor": "Linda Hu",
+  "cs_approved": true,
   "cs_compatible": true,
   "category": "Utilities",
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
-  "help_online": "https://docs.fortinet.com/document/fortisoar/2.2.0/microsoft-graph-api/1080/microsoft-graph-api-v2-2-0",
+  "help_online": "https://docs.fortinet.com/document/fortisoar/2.3.0/microsoft-graph-api/230/microsoft-graph-api-v2-3-0",
   "ingestion_supported": false,
   "configuration": {
     "fields": [
@@ -208,23 +209,32 @@
       "category": "investigation",
       "annotation": "get_risky_users_list",
       "description": "Retrieves a list of all risky users from the Microsoft Graph API.",
-      "parameters": [],
-      "output_schema": {
-        "@odata.context": "",
-        "value": [
-          {
-            "id": "",
-            "isDeleted": "",
-            "isProcessing": "",
-            "riskLevel": "",
-            "riskState": "",
-            "riskDetail": "",
-            "riskLastUpdatedDateTime": "",
-            "userDisplayName": "",
-            "userPrincipalName": ""
-          }
-        ]
-      },
+      "parameters": [
+        {
+          "title": "Days",
+          "description": "Number of past days to filter by riskLastUpdatedDateTime. Leave blank to retrieve all risky users.",
+          "editable": true,
+          "required": false,
+          "visible": true,
+          "type": "integer",
+          "name": "days",
+          "tooltip": "E.g. 7 = last 7 days. Leave blank for all."
+        }
+      ],
+      "output_schema": [
+        {
+          "@odata.type": "",
+          "id": "",
+          "isDeleted": "",
+          "isProcessing": "",
+          "riskLastUpdatedDateTime": "",
+          "riskLevel": "",
+          "riskState": "",
+          "riskDetail": "",
+          "userDisplayName": "",
+          "userPrincipalName": ""
+        }
+      ],
       "enabled": true
     },
     {
@@ -246,7 +256,7 @@
         }
       ],
       "output_schema": {
-        "@odata.context": "",
+        "@odata.type": "",
         "id": "",
         "isDeleted": "",
         "isProcessing": "",
@@ -258,6 +268,97 @@
         "userPrincipalName": ""
       },
       "enabled": true
+    },
+    {
+      "title": "Get Risky User History",
+      "annotation": "get_risky_user_history",
+      "category": "investigation",
+      "description": "Retrieve the risk history for a specific risky user from the Microsoft Graph API based on the user ID you have specified.",
+      "enabled": true,
+      "operation": "get_risky_user_history",
+      "parameters": [
+        {
+          "description": "Specify the ID of the risky user whose history you want to retrieve from the Microsoft Graph API.",
+          "editable": true,
+          "name": "risk_id",
+          "required": true,
+          "title": "Risky User ID",
+          "tooltip": "Specify the ID of the risky user whose history you want to retrieve from the Microsoft Graph API.",
+          "type": "text",
+          "visible": true
+        }
+      ],
+      "output_schema": {
+        "@odata.context": "",
+        "value": [
+          {
+            "activity": {
+              "detail": "",
+              "eventTypes": [],
+              "riskEventTypes": []
+            },
+            "id": "",
+            "isDeleted": "",
+            "isProcessing": "",
+            "riskDetail": "",
+            "riskLastUpdatedDateTime": "",
+            "riskLevel": "",
+            "riskState": "",
+            "userDisplayName": "",
+            "userPrincipalName": ""
+          }
+        ]
+      }
+    },
+    {
+      "title": "Get Risk Detections",
+      "annotation": "get_risk_detections",
+      "category": "investigation",
+      "description": "Retrieves risk detection events from Microsoft Graph Identity Protection. Optionally filter by userId to return detections for a specific user.",
+      "enabled": true,
+      "operation": "get_risk_detections",
+      "parameters": [
+        {
+          "description": "Specify the user ID to filter risk detections. Leave blank to retrieve all risk detections.",
+          "editable": true,
+          "visible": true,
+          "required": false,
+          "name": "userId",
+          "title": "User ID",
+          "tooltip": "E.g. the Azure AD object ID of the user. Leave blank for all detections.",
+          "type": "text"
+        }
+      ],
+      "output_schema": [
+        {
+          "@odata.type": "",
+          "id": "",
+          "requestId": "",
+          "correlationId": "",
+          "riskEventType": "",
+          "riskState": "",
+          "riskLevel": "",
+          "riskDetail": "",
+          "source": "",
+          "detectionTimingType": "",
+          "activity": "",
+          "tokenIssuerType": "",
+          "ipAddress": "",
+          "location": {
+            "city": "",
+            "state": "",
+            "countryOrRegion": "",
+            "geoCoordinates": ""
+          },
+          "activityDateTime": "",
+          "detectedDateTime": "",
+          "lastUpdatedDateTime": "",
+          "userId": "",
+          "userDisplayName": "",
+          "userPrincipalName": "",
+          "additionalInfo": ""
+        }
+      ]
     },
     {
       "title": "Get All Security Alerts",
@@ -1840,6 +1941,64 @@
           "tooltip": "Specify IP address ranges in IPv6 format, as defined in IETF RFC5962, to be added in the specified named location. You can specify multiple IPv6 ranges as comma-separated values. For example: 2001:db8::/43, 2001:db8::/47"
         }
       ],
+      "enabled": true
+    },
+    {
+      "title": "Run Advanced Hunting Query",
+      "operation": "run_advanced_hunting_query",
+      "category": "investigation",
+      "annotation": "run_advanced_hunting_query",
+      "description": "Runs an advanced hunting query in Microsoft 365 Defender using Kusto Query Language (KQL) to search supported security data for threats, suspicious activity, or specific events across your environment.",
+      "parameters": [
+        {
+          "title": "Query",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "query",
+          "placeholder": "e.g. DeviceProcessEvents| where InitiatingProcessFileName =~ 'powershell.exe'",
+          "tooltip": "Specify the hunting query in Kusto Query Language (KQL). For more information, see. https://learn.microsoft.com/en-us/kusto/query/kql-quick-reference?view=azure-data-explorer&preserve-view=true",
+          "description": "Specify the hunting query in Kusto Query Language (KQL)."
+        },
+        {
+          "title": "TimeSpan",
+          "type": "text",
+          "name": "timespan",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "placeholder": "e.g P90D, 2024-02-01T08:00:00Z, etc",
+          "description": "Specify the time range for the query in ISO 8601 format. If startTime is not provided, the default is the last 30 days. If both the query and startTime specify a time filter, the shorter time range is used. For more information, see. https://learn.microsoft.com/en-us/graph/api/security-security-runhuntingquery?view=graph-rest-1.0&tabs=http",
+          "tooltip": "Specify the time range for the query in ISO 8601 format. If startTime is not provided, the default is the last 30 days. If both the query and startTime specify a time filter, the shorter time range is used."
+        },
+        {
+          "title": "Workspace ID",
+          "type": "text",
+          "name": "workspace_id",
+          "required": false,
+          "visible": true,
+          "editable": true,
+          "description": "Specify the GUID of a specific Log Analytics workspace to target. If omitted, the service uses the caller's primary workspace. If the workspace isn't found or not accessible, the service falls back to the caller's primary workspace.",
+          "tooltip": "Specify the GUID of a specific Log Analytics workspace to target. If omitted, the service uses the caller's primary workspace. If the workspace isn't found or not accessible, the service falls back to the caller's primary workspace."
+        }
+      ],
+      "output_schema": {
+        "schema": [
+          {
+            "name": "",
+            "type": ""
+          }
+        ],
+        "results": [
+          {
+            "timestamp": "",
+            "fileName": "",
+            "initiatingProcessFileName": ""
+          }
+        ],
+        "@odata.context": ""
+      },
       "enabled": true
     }
   ]

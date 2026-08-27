@@ -1,14 +1,16 @@
 """"
 Copyright start
 MIT License
-Copyright (c) 2025 Fortinet Inc
+Copyright (c) 2026 Fortinet Inc
 Copyright end
 """
+
 import threading
 from queue import Queue
 from threading import Thread
 
 import requests
+from datetime import timedelta, timezone
 from connectors.core.connector import get_logger, ConnectorError
 
 from .microsoft_api_auth import *
@@ -178,23 +180,86 @@ def check_payload(payload):
 def get_risky_users_list(config, params):
     microsoft_graph = SetupSession(config)
     graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
-    risk_id = params.get('risk_id')
-    if risk_id:
-        url = graph_api_endpoint + '/identityProtection/riskyUsers/{0}'.format(risk_id)
+    days = params.get('days')
+    if days:
+        days_ago = datetime.now(timezone.utc) - timedelta(days=int(days))
+        days_ago_str = days_ago.strftime("%Y-%m-%dT%H:%M:%SZ")
+        url = (
+                graph_api_endpoint
+                + '/identityProtection/riskyUsers'
+                + '?$filter=riskLastUpdatedDateTime ge ' + days_ago_str
+                + '&$top=500'
+        )
     else:
-        url = graph_api_endpoint + '/identityProtection/riskyUsers'
+        url = graph_api_endpoint + '/identityProtection/riskyUsers?$top=500'
+
+    all_users = []
+    while url:
+        response = microsoft_graph.session.get(url=url)
+        if not response.ok:
+            microsoft_graph.session.close()
+            raise ConnectorError(
+                'Fail To request API {0} response is :{1} with reason: {2}'.format(
+                    str(url), str(response.content), str(response.reason)))
+        data = response.json()
+        all_users.extend(data.get('value', []))
+        url = data.get('@odata.nextLink')
+
+    microsoft_graph.session.close()
+    return all_users
+
+
+def get_risky_user_details(config, params):
+    microsoft_graph = SetupSession(config)
+    graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
+    risk_id = params.get('risk_id')
+    url = graph_api_endpoint + '/identityProtection/riskyUsers/{0}'.format(risk_id)
     response = microsoft_graph.session.get(url=url)
     microsoft_graph.session.close()
     if response.ok:
         return response.json()
+    raise ConnectorError(
+        'Fail To request API {0} response is :{1} with reason: {2}'.format(
+            str(url), str(response.content), str(response.reason)))
+
+
+def get_risky_user_history(config, params):
+    microsoft_graph = SetupSession(config)
+    graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
+    risk_id = params.get('risk_id')
+    url = graph_api_endpoint + '/identityProtection/riskyUsers/{0}/history'.format(risk_id)
+    response = microsoft_graph.session.get(url=url)
+    microsoft_graph.session.close()
+    if response.ok:
+        return response.json()
+    raise ConnectorError(
+        'Fail To request API {0} response is :{1} with reason: {2}'.format(
+            str(url), str(response.content), str(response.reason)))
+
+
+def get_risk_detections(config, params):
+    microsoft_graph = SetupSession(config)
+    graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
+    user_id = params.get('userId')
+    if user_id:
+        url = graph_api_endpoint + "/identityProtection/riskDetections?$filter=userId eq '{0}'".format(user_id)
     else:
-        raise ConnectorError(
-            'Fail To request API {0} response is :{1} with reason: {2}'.format(str(url), str(response.content),
-                                                                               str(response.reason)))
+        url = graph_api_endpoint + '/identityProtection/riskDetections'
 
+    all_detections = []
+    while url:
+        response = microsoft_graph.session.get(url=url)
+        if not response.ok:
+            microsoft_graph.session.close()
+            raise ConnectorError(
+                'Fail To request API {0} response is :{1} with reason: {2}'.format(
+                    str(url), str(response.content), str(response.reason)))
+        data = response.json()
+        all_detections.extend(data.get('value', []))
+        url = data.get('@odata.nextLink')
 
-def get_risky_user_details(config, params):
-    return get_risky_users_list(config, params)
+    microsoft_graph.session.close()
+    return all_detections
 
 
 def get_groups(config, params):
@@ -567,6 +632,26 @@ def create_ip_range_location(config, params):
                                                                                str(response.reason)))
 
 
+def run_advanced_hunting_query(config, params):
+    microsoft_graph = SetupSession(config)
+    graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
+    url = graph_api_endpoint + '/security/runHuntingQuery'
+    payload = {
+        "Query": params.get('query'),
+        "Timespan": params.get('timespan'),
+        "workspaceId": params.get('workspace_id')
+    }
+    payload = check_payload(payload)
+    response = microsoft_graph.session.post(url=url, json=payload)
+    microsoft_graph.session.close()
+    if response.ok:
+        return response.json()
+    else:
+        raise ConnectorError(
+            'Fail To request API {0} response is :{1} with reason: {2}'.format(str(url), str(response.content),
+                                                                               str(response.reason)))
+
+
 def _check_health(config):
     if check(config, config.get('connector_info')):
         return True
@@ -575,6 +660,8 @@ def _check_health(config):
 operations = {
     'get_risky_users_list': get_risky_users_list,
     'get_risky_user_details': get_risky_user_details,
+    'get_risky_user_history': get_risky_user_history,
+    'get_risk_detections': get_risk_detections,
     'get_groups': get_groups,
     'get_security_alert': get_security_alert,
     'get_all_security_alerts': get_all_security_alerts,
@@ -589,5 +676,6 @@ operations = {
     'block_new_ips': block_new_ips,
     'unblock_new_ips': unblock_new_ips,
     'get_all_named_locations': get_all_named_locations,
-    'check_health': _check_health
+    'check_health': _check_health,
+    'run_advanced_hunting_query': run_advanced_hunting_query
 }
