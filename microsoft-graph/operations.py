@@ -181,7 +181,9 @@ def get_risky_users_list(config, params):
     microsoft_graph = SetupSession(config)
     graph_api_endpoint = '{0}/{1}'.format(microsoft_graph.ms.host, config.get('api_version'))
     days = params.get('days')
-    if days:
+    if days not in (None, '') and int(days) <= 0:
+        raise Exception("Days must be greater than 0.")
+    elif days:
         days_ago = datetime.now(timezone.utc) - timedelta(days=int(days))
         days_ago_str = days_ago.strftime("%Y-%m-%dT%H:%M:%SZ")
         url = (
