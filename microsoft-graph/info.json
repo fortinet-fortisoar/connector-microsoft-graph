@@ -63,7 +63,7 @@
             },
             {
               "title": "Client Secret",
-              "description": "Specify the Unique Client Secret of the Azure Active Directory application that is used to create an authentication token required to access the API. For information on how to get the secret key, see https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/exposed-apis-create-app-webapp.",
+              "description": "Specify the Unique Client Secret of the Azure Active Directory application that is used to create an authentication token required to access the API. For information on how to get the secret key, see https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-credentials.",
               "required": true,
               "editable": true,
               "visible": true,
@@ -105,7 +105,7 @@
             },
             {
               "title": "Client Secret",
-              "description": "Specify the Unique Client Secret of the Azure Active Directory application that is used to create an authentication token required to access the API. For information on how to get the secret key, see https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/exposed-apis-create-app-webapp.",
+              "description": "Specify the Unique Client Secret of the Azure Active Directory application that is used to create an authentication token required to access the API. For information on how to get the secret key, see https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-credentials.",
               "required": true,
               "editable": true,
               "visible": true,
@@ -120,8 +120,8 @@
               "visible": true,
               "type": "password",
               "name": "code",
-              "tooltip": "Specify the authorization code that you acquired during the authorization step",
-              "description": "Specify the authorization code that you acquired during the authorization step. For more information, see the Getting Access Tokens using the Delegate Permissions method section."
+              "tooltip": "Specify the authorization code that you acquired during the authorization step. For more information, see the Getting Access Tokens using the Delegated Permission method section.",
+              "description": "Specify the authorization code that you acquired during the authorization step. For more information, see the Getting Access Tokens using the Delegated Permission method section."
             },
             {
               "title": "Redirect URL",
@@ -212,13 +212,13 @@
       "parameters": [
         {
           "title": "Days",
-          "description": "Number of past days to filter by riskLastUpdatedDateTime. Leave blank to retrieve all risky users.",
+          "description": "(Optional) Specify the number of days to look back when retrieving risky users. For example, specify 7 to retrieve users whose risk was last updated in the last seven days. Leave this field blank to retrieve all risky users.",
           "editable": true,
           "required": false,
           "visible": true,
           "type": "integer",
           "name": "days",
-          "tooltip": "E.g. 7 = last 7 days. Leave blank for all."
+          "tooltip": "Specify the number of days to look back when retrieving risky users. For example, specify 7 to retrieve users whose risk was last updated in the last seven days. Leave this field blank to retrieve all risky users."
         }
       ],
       "output_schema": [
@@ -242,7 +242,7 @@
       "operation": "get_risky_user_details",
       "category": "investigation",
       "annotation": "get_risky_user_details",
-      "description": "Retrieve details for a specific risky user from the Microsoft Graph API based on the user ID you have specified.",
+      "description": "Retrieves details for a specific risky user from the Microsoft Graph API based on the user ID that you have specified.",
       "parameters": [
         {
           "title": "Risky User ID",
@@ -273,7 +273,7 @@
       "title": "Get Risky User History",
       "annotation": "get_risky_user_history",
       "category": "investigation",
-      "description": "Retrieve the risk history for a specific risky user from the Microsoft Graph API based on the user ID you have specified.",
+      "description": "Retrieves the risk history for a specific risky user from the Microsoft Graph API based on the user ID that you have specified.",
       "enabled": true,
       "operation": "get_risky_user_history",
       "parameters": [
@@ -314,18 +314,18 @@
       "title": "Get Risk Detections",
       "annotation": "get_risk_detections",
       "category": "investigation",
-      "description": "Retrieves risk detection events from Microsoft Graph Identity Protection. Optionally filter by userId to return detections for a specific user.",
+      "description": "Retrieves risk detection events from Microsoft Graph Identity Protection based on the user ID that you have specified.",
       "enabled": true,
       "operation": "get_risk_detections",
       "parameters": [
         {
-          "description": "Specify the user ID to filter risk detections. Leave blank to retrieve all risk detections.",
+          "description": "(Optional) Specify the user ID based on which you want to filter risk detections. Leave this field blank to retrieve all risk detections.",
           "editable": true,
           "visible": true,
           "required": false,
           "name": "userId",
           "title": "User ID",
-          "tooltip": "E.g. the Azure AD object ID of the user. Leave blank for all detections.",
+          "tooltip": "Specify the user ID based on which you want to filter risk detections. Leave this field blank to retrieve all risk detections.",
           "type": "text"
         }
       ],
@@ -1499,7 +1499,7 @@
       "description": "Deletes a specific message from the specific user's mailbox in Azure based on the user ID and message ID you have specified.",
       "operation": "del_message",
       "annotation": "del_message",
-      "category": "investigation",
+      "category": "remediation",
       "parameters": [
         {
           "title": "User ID",
@@ -1532,7 +1532,7 @@
       "description": "Deletes messages from multiple users' mailboxes in Azure based on the comma-separated list of users you have specified.",
       "operation": "del_message_bulk",
       "annotation": "del_message_bulk",
-      "category": "investigation",
+      "category": "remediation",
       "parameters": [
         {
           "title": "User List",
@@ -1885,7 +1885,7 @@
       "description": "Creates a new IP named location in Azure based on the specified input parameter.",
       "operation": "create_ip_range_location",
       "annotation": "create_ip_range_location",
-      "category": "investigation",
+      "category": "remediation",
       "output_schema": {
         "@odata.context": "",
         "@odata.type": "",
@@ -1958,19 +1958,19 @@
           "type": "text",
           "name": "query",
           "placeholder": "e.g. DeviceProcessEvents| where InitiatingProcessFileName =~ 'powershell.exe'",
-          "tooltip": "Specify the hunting query in Kusto Query Language (KQL). For more information, see. https://learn.microsoft.com/en-us/kusto/query/kql-quick-reference?view=azure-data-explorer&preserve-view=true",
+          "tooltip": "Specify the hunting query in Kusto Query Language (KQL). For more information, see https://learn.microsoft.com/en-us/kusto/query/kql-quick-reference.",
           "description": "Specify the hunting query in Kusto Query Language (KQL)."
         },
         {
-          "title": "TimeSpan",
+          "title": "Time Span",
           "type": "text",
           "name": "timespan",
           "required": false,
           "visible": true,
           "editable": true,
           "placeholder": "e.g P90D, 2024-02-01T08:00:00Z, etc",
-          "description": "Specify the time range for the query in ISO 8601 format. If startTime is not provided, the default is the last 30 days. If both the query and startTime specify a time filter, the shorter time range is used. For more information, see. https://learn.microsoft.com/en-us/graph/api/security-security-runhuntingquery?view=graph-rest-1.0&tabs=http",
-          "tooltip": "Specify the time range for the query in ISO 8601 format. If startTime is not provided, the default is the last 30 days. If both the query and startTime specify a time filter, the shorter time range is used."
+          "description": "(Optional) Specify the time range for the query in ISO 8601 format. If the start time is not provided, the default is the last 30 days. If both the query and the start time specify a time filter, the shorter time range is used. For more information, see https://learn.microsoft.com/en-us/graph/api/security-security-runhuntingquery.",
+          "tooltip": "Specify the time range for the query in ISO 8601 format. If the start time is not provided, the default is the last 30 days. If both the query and the start time specify a time filter, the shorter time range is used."
         },
         {
           "title": "Workspace ID",
@@ -1979,8 +1979,8 @@
           "required": false,
           "visible": true,
           "editable": true,
-          "description": "Specify the GUID of a specific Log Analytics workspace to target. If omitted, the service uses the caller's primary workspace. If the workspace isn't found or not accessible, the service falls back to the caller's primary workspace.",
-          "tooltip": "Specify the GUID of a specific Log Analytics workspace to target. If omitted, the service uses the caller's primary workspace. If the workspace isn't found or not accessible, the service falls back to the caller's primary workspace."
+          "description": "(Optional) Specify the GUID of a specific Log Analytics workspace to target. If this field is omitted, the service uses the caller's primary workspace. If the workspace is not found or is not accessible, the service falls back to the caller's primary workspace.",
+          "tooltip": "Specify the GUID of a specific Log Analytics workspace to target. If this field\nis omitted, the service uses the caller's primary workspace. If the workspace is not found or is not accessible, the service falls back to the caller's primary workspace."
         }
       ],
       "output_schema": {
